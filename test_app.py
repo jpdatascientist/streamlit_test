@@ -88,13 +88,13 @@ if app_mode == "テキスト生成":
 elif app_mode == "テキスト校閲":
     st.header("テキスト校閲")
 
-    input_mode = st.radio("入力方法を選択してください", ["テキストを直接入力", "PDFまたはWordファイルをアップロード"])
+    input_mode = st.radio("入力方法を選択してください", ["テキストを直接入力", "PDF、txtファイルまたはWordファイルをアップロード"])
     input_text = ""
 
     if input_mode == "テキストを直接入力":
         input_text = st.text_area("校閲したいテキストを入力してください:", height=200)
     else:
-        uploaded_file = st.file_uploader("ファイルをアップロード（PDFまたはWord）", type=["pdf", "docx"])
+        uploaded_file = st.file_uploader("ファイルをアップロード（PDF、txtファイルまたはWord）", type=["pdf", "docx", "txt"])
         if uploaded_file:
             file_size_mb = len(uploaded_file.read()) / (1024 * 1024)
             uploaded_file.seek(0)  # ファイルポインタをリセット
@@ -116,6 +116,12 @@ elif app_mode == "テキスト校閲":
                         st.success("Wordファイルの内容を抽出しました。")
                     except Exception as e:
                         st.error(f"Wordファイルの読み込みに失敗しました: {e}")
+                elif uploaded_file.name.endswith(".txt"):
+                    try:
+                        input_text = uploaded_file.read().decode("utf-8")
+                        st.success("txtファイルの内容を抽出しました。")
+                    except Exception as e:
+                        st.error(f"txtファイルの読み込みに失敗しました: {e}")
 
     check_options = st.multiselect(
         "確認項目:",
